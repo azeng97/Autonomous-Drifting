@@ -14,8 +14,8 @@
 rand('seed',1); randn('seed',1); format short; format compact; 
 % include some paths
 % try
-%   rd = '../modules/pilco-matlab/';
-%   addpath([rd 'base'],[rd 'util'],[rd 'gp'],[rd 'control'],[rd 'loss']);
+%  rd = [pwd, '/../modules/pilco-matlab/'];
+%  addpath([rd 'base'],[rd 'util'],[rd 'gp'],[rd 'control'],[rd 'loss']);
 % catch
 % end
 
@@ -55,7 +55,7 @@ stateSize = 2;
 
 % Define the car's params to keep track of Gazebo Env
 plant.car.throttle = 1750;
-car.transmission = "2WD";
+car.transmission = "4WD";
 car.degs = 25;
 car.friction = 0.8;
 

@@ -20,48 +20,48 @@ throttle = 1650
 servo = 0
 
 def getKey():
-	tty.setraw(sys.stdin.fileno())
-	select.select([sys.stdin], [], [], 0)
-	key = sys.stdin.read(1)
-	termios.tcsetattr(sys.stdin, termios.TCSADRAIN, settings)
-	return key
+    tty.setraw(sys.stdin.fileno())
+    select.select([sys.stdin], [], [], 0)
+    key = sys.stdin.read(1)
+    termios.tcsetattr(sys.stdin, termios.TCSADRAIN, settings)
+    return key
 
 if __name__=="__main__":
-    	settings = termios.tcgetattr(sys.stdin)
-	env = gym.make('DriftCarGazeboContinuous4WD-v0') 
-	env.reset()
-	env.render()
+    settings = termios.tcgetattr(sys.stdin)
+    env = gym.make('DriftCarGazeboContinuousBodyFrame4WD-v0')
+    env.reset()
+    env.render()
 
-	try:
-	        while(1):
-			key = getKey()
-			if key == 'w' or key == 's':
-                                if key == 'w':
-                                        throttle = throttle + THROTTLE_STEP
-                                if key == 's':  
-                                        throttle = throttle - THROTTLE_STEP
-			elif key == 'd' or key == 'a':                
-                                if key == 'd':
-                                        servo = servo - STEER_STEP             
-                                        if servo < -0.785:
-                                                servo = -0.785
-                                if key == 'a':  
-                                        servo = servo + STEER_STEP
-                                        if servo > 0.785:
-                                                servo = 0.785
-			elif (key == 'r'):
-				env.reset()
-				servo = 0
-				continue
-			elif (key == '\x03'):
-				break
-			print(throttle, servo)
-			state, reward, done, _ = env.step((throttle, servo))
-			print(state)
-	except Exception as e:
-		print e
+    try:
+        while(1):
+            key = getKey()
+            if key == 'w' or key == 's':
+                if key == 'w':
+                    throttle = throttle + THROTTLE_STEP
+                if key == 's':
+                    throttle = throttle - THROTTLE_STEP
+            elif key == 'd' or key == 'a':
+                if key == 'd':
+                    servo = servo - STEER_STEP
+                    if servo < -0.785:
+                            servo = -0.785
+                if key == 'a':
+                        servo = servo + STEER_STEP
+                        if servo > 0.785:
+                                servo = 0.785
+            elif (key == 'r'):
+                env.reset()
+                servo = 0
+                continue
+            elif (key == '\x03'):
+                break
+            print(throttle, servo)
+            state, reward, done, _ = env.step((throttle, servo))
+            print(state)
+    except Exception as e:
+        print(e)
 
-	finally:
-		env.reset()
-		env.close()
-		termios.tcsetattr(sys.stdin, termios.TCSADRAIN, settings)
+    finally:
+        env.reset()
+        env.close()
+        termios.tcsetattr(sys.stdin, termios.TCSADRAIN, settings)

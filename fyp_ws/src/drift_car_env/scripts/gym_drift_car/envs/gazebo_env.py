@@ -195,16 +195,16 @@ class GazeboEnv(gym.Env):
                 # desiredTangentialSpeed = 5          # Tangential speed with respect to car body.
                 # desiredNormalSpeed  = 0           # Perfect circular motion
                 desiredAngularVel = -3.5
-		desiredForwardVel = 0.5		
-		desiredSideVel = 2 
+                desiredForwardVel = 0.5
+                desiredSideVel = 2
 
                 # velx = posData.twist[1].linear.x
                 # vely = posData.twist[1].linear.y
                 # carTangentialSpeed = math.sqrt(velx ** 2 + vely ** 2)
                 # carAngularVel = posData.twist[1].angular.z
-		carAngularVel = state[0]
-		carForwardVel = state[1]
-		carSideVel = state[2]
+                carAngularVel = state[0]
+                carForwardVel = state[1]
+                carSideVel = state[2]
 
                 sigma = 5
                 deviationMagnitude = (carSideVel - desiredSideVel)**2 + \

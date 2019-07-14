@@ -75,3 +75,10 @@ register(
     # state: thetaDot, xDotBodyFrame, yDotBodyFrame
     kwargs={'continuous' : True, 'four_wheel_drive': True, 'state_info': ["thetadot", "xdotbodyframe", "ydotbodyframe"]}
 )
+
+register(
+    id='DriftCarGazeboContinuous4WD-v0',
+    entry_point='gym_drift_car.envs:GazeboEnv',
+    # state: thetaDot, xDotBodyFrame, yDotBodyFrame
+    kwargs={'continuous' : True, 'four_wheel_drive': True}
+)
