@@ -11,7 +11,7 @@ TEST = 10
 MAX_STEPS = 300
 import argparse
 
-def main():
+def main(args):
     env = filter_env.makeFilteredEnv(gym.make(ENV_NAME))
     agent = DDPG(env)
     # env.monitor.start('experiments/' + ENV_NAME,force=True)
