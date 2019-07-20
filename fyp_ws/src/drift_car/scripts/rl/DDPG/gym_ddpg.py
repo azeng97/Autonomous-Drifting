@@ -1,4 +1,5 @@
 import filter_env
+import sys
 from ddpg import *
 import gc
 gc.enable()
@@ -8,12 +9,16 @@ ENV_NAME = "DriftCarGazeboContinuous4WD-v0"
 EPISODES = 100000
 TEST = 10
 MAX_STEPS = 300
+import argparse
 
 def main():
     env = filter_env.makeFilteredEnv(gym.make(ENV_NAME))
     agent = DDPG(env)
     # env.monitor.start('experiments/' + ENV_NAME,force=True)
     saver = tf.train.Saver()
+    if args.checkpoint:
+        saver.restore(agent.sess, args.checkpoint)
+        print("Resuming checkpoint from" + args.checkpoint)
     max_reward = -100000
     for episode in xrange(EPISODES):
         state = env.reset()
@@ -47,4 +52,7 @@ def main():
     env.monitor.close()
 
 if __name__ == '__main__':
-    main()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--checkpoint", type=str)
+    args = parser.parse_args(sys.argv[1:])
+    main(args)
