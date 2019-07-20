@@ -217,7 +217,7 @@ class GazeboEnv(gym.Env):
 
                 # 1 - exp for Cost
                 # exp - 1 for reward
-                return 1 - math.exp(-deviationMagnitude/(2 * sigma**2))
+                return math.exp(-deviationMagnitude/(2 * sigma**2)) - 1
         
         def getRewardPotentialBased(self, action, posData):
                 reward = 0.0
