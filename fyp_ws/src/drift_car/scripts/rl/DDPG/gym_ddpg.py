@@ -14,7 +14,7 @@ def main():
     agent = DDPG(env)
     # env.monitor.start('experiments/' + ENV_NAME,force=True)
     saver = tf.train.Saver()
-    max_reward = 0
+    max_reward = -100000
     for episode in xrange(EPISODES):
         state = env.reset()
         print "episode:",episode
