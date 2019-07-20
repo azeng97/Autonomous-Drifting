@@ -123,7 +123,8 @@ class GazeboEnv(gym.Env):
 
                 self.pausePhysics()
 
-                state, rewardState = self.getState(posData)
+                state = self.getState(posData)
+                rewardState = [state[-4], state[-2], state[-1]]
                 reward = self.getRewardExponential(rewardState)
                 done = self.isDone(posData)
               
@@ -189,7 +190,7 @@ class GazeboEnv(gym.Env):
                 
                 rewardState = [stateInfo["thetadot"], stateInfo["xdotbodyframe"], stateInfo["ydotbodyframe"]]
 
-                return np.array(state), rewardState
+                return np.array(state)#, rewardState
 
         def getRewardExponential(self, state):
                 # desiredTangentialSpeed = 5          # Tangential speed with respect to car body.

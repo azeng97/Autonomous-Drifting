@@ -13,10 +13,11 @@ def main():
     env = filter_env.makeFilteredEnv(gym.make(ENV_NAME))
     agent = DDPG(env)
     # env.monitor.start('experiments/' + ENV_NAME,force=True)
-
+    saver = tf.train.Saver()
+    max_reward = 0
     for episode in xrange(EPISODES):
         state = env.reset()
-        #print "episode:",episode
+        print "episode:",episode
         # Train
         for step in xrange(MAX_STEPS):
             action = agent.noise_action(state)
@@ -30,7 +31,7 @@ def main():
             total_reward = 0
             for i in xrange(TEST):
                 state = env.reset()
-                for j in xrange(env.spec.timestep_limit):
+                for j in xrange(MAX_STEPS):
                     #env.render()
                     action = agent.action(state) # direct action for test
                     state,reward,done,_ = env.step(action)
@@ -38,7 +39,11 @@ def main():
                     if done:
                         break
             ave_reward = total_reward/TEST
+            if ave_reward > max_reward:
+                max_reward = ave_reward
+                saver.save(agent.sess, "models/ddpg_ep" + str(episode) + "-" + str(ave_reward))
             print 'episode: ',episode,'Evaluation Average Reward:',ave_reward
+
     env.monitor.close()
 
 if __name__ == '__main__':
