@@ -22,7 +22,7 @@ def main(args):
     max_reward = -100000
     for episode in xrange(EPISODES):
         state = env.reset()
-        print "episode:",episode
+        print("episode:",episode)
         # Train
         for step in xrange(MAX_STEPS):
             action = agent.noise_action(state)
@@ -47,7 +47,7 @@ def main(args):
             if ave_reward > max_reward:
                 max_reward = ave_reward
                 saver.save(agent.sess, "models/ddpg_ep" + str(episode) + "-" + str(ave_reward))
-            print 'episode: ',episode,'Evaluation Average Reward:',ave_reward
+            print('episode: ',episode,'Evaluation Average Reward:',ave_reward)
 
     env.monitor.close()
 
