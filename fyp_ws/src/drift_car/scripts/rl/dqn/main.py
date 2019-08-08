@@ -190,11 +190,33 @@ def train(config):
 
                 target_network_update_apply(sess, targetQN_update)
 
+            if ep % 100 == 0 and ep > 100:
+                total_reward = 0
+                for i in range(10):
+                    state = env.reset()
+                    for j in range(300):
+                        # env.render()
+                        feed = {mainQN.inputs_: [state]}
+                        Qs = sess.run(mainQN.output, feed_dict=feed)
+                        action = np.argmax(Qs) # direct action for test
+                        state, reward, done, _ = env.step(action)
+                        total_reward += reward
+                        if done:
+                            break
+                ave_reward = total_reward / 10
+                if ave_reward > max_reward:
+                    max_reward = ave_reward
+                    saver.save(sess, "model/dqn_ep" + str(ep) + "-" + str(ave_reward), total_step_count)
+                print('episode: ', ep, 'Evaluation Average Reward:', ave_reward)
+                with open("model/dqn.csv", "a") as savefile:
+                    wr = csv.writer(savefile, dialect="excel")
+                    wr.writerow([ep, ave_reward])
+
             # Save model.
-            if config.save_model and total_step_count > config.pretrain_steps and \
-                    ep % config.save_model_interval == 0:
-                print('Saving model...')
-                saver.save(sess, config.model_path +'/model' + str(ep) + '.ckpt', total_step_count)
+            # if config.save_model and total_step_count > config.pretrain_steps and \
+            #         ep % config.save_model_interval == 0:
+            #     print('Saving model...')
+            #     saver.save(sess, config.model_path +'/model' + str(ep) + '.ckpt', total_step_count)
 
 if __name__ == '__main__':
     config = params.parse_args()
