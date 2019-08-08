@@ -6,7 +6,6 @@ from std_msgs.msg import Float64MultiArray
 import math
 import numpy as np
 
-from xbee.thread import XBee
 import serial
 
 def callback(data, args):
@@ -42,7 +41,6 @@ if __name__ == '__main__':
     env = gym.make('DriftCarGazeboContinuous4WD-v0')
     # env = gym.make('DriftCarGazeboContinuousPartial-v0')
     allRewards = []
-
     pub = rospy.Publisher('drift_car/state', Float64MultiArray, queue_size=1) 
     rospy.Subscriber('drift_car/action', Float64MultiArray, callback, (env, pub, allRewards))
 

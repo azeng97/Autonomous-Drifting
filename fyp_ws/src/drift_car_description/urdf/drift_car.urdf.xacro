@@ -268,7 +268,7 @@ limitations under the License.
     </visual>
   </link>
   <gazebo reference="base_link">
-    <material>Gazebo/Grey</material>
+    <material>Gazebo/Red</material>
   </gazebo>
   
   <joint name="imu_joint" type="fixed">
@@ -321,7 +321,7 @@ limitations under the License.
     </xacro:solid_cuboid_inertial>
   </link>
   <gazebo reference="chassis">
-    <material>Gazebo/Grey</material>
+    <material>Gazebo/Red</material>
   </gazebo>
 
   <joint name="base_link_to_chasis" type="fixed">

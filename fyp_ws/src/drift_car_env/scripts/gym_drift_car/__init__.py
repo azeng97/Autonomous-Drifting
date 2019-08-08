@@ -31,7 +31,7 @@ register(
     id='DriftCarGazeboPartialBodyFrame4WD-v0',
     entry_point='gym_drift_car.envs:GazeboEnv',
     # state: thetadot, xDotBody, yDotBody.
-    kwargs={'four_wheel_drive': True, 'state_info': ["thetadot", "xdotbodyframe", "ydotbodyframe"]}
+    kwargs={'four_wheel_drive': True}
 )
 
 register(

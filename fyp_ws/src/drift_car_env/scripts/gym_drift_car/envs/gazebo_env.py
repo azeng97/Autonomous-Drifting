@@ -83,9 +83,14 @@ class GazeboEnv(gym.Env):
                 self.previous_pos = self.getPosData()
                   
                 # Learning Parameters
-                self.radius = 3
+                self.radius = 1
                 self.throttle = 1750      
                 self.maxDeviationFromCenter = 4
+                self.evaluation = True
+                if self.evaluation:
+                        print("Evaluating")
+                        self.rewards = []
+
                 
         def _seed(self, seed=None):
                 self.np_random, seed = seeding.np_random(seed)
@@ -124,10 +129,14 @@ class GazeboEnv(gym.Env):
                 self.pausePhysics()
 
                 state = self.getState(posData)
-                rewardState = [state[-4], state[-2], state[-1]]
-                reward = self.getRewardExponential(rewardState)
+                # rewardState = [state[-4], state[-2], state[-1]]
+                reward = self.getRewardExponential(state)
+
+                if self.evaluation:
+                        self.rewards.append(reward)
+
                 done = self.isDone(posData)
-              
+
                 #self.previous_imu = imuData
                 self.previous_pos = posData     
                 self.previous_action = action
@@ -153,6 +162,8 @@ class GazeboEnv(gym.Env):
                 m.transform.rotation.y = orientation.y
                 m.transform.rotation.z = orientation.z
                 m.transform.rotation.w = orientation.w
+
+                (roll, pitch, yaw) = tf.transformations.euler_from_quaternion([orientation.x, orientation.y, orientation.z, orientation.w])
                 t.setTransform(m)
 
                 velx = posData.twist[1].linear.x
@@ -188,9 +199,9 @@ class GazeboEnv(gym.Env):
                 for key in self.state_info:
                        state.append(stateInfo[key]) 
                 
-                rewardState = [stateInfo["thetadot"], stateInfo["xdotbodyframe"], stateInfo["ydotbodyframe"]]
+                #rewardState = [stateInfo["thetadot"], stateInfo["xdotbodyframe"], stateInfo["ydotbodyframe"]]
 
-                return np.array(state)#, rewardState
+                return np.array(state)
 
         def getRewardExponential(self, state):
                 # desiredTangentialSpeed = 5          # Tangential speed with respect to car body.
@@ -207,7 +218,13 @@ class GazeboEnv(gym.Env):
                 carForwardVel = state[1]
                 carSideVel = state[2]
 
-                sigma = 5
+                # x = state[0]
+                # y = state[1]
+                # deviationPenalty = -(abs((self.radius ** 2) - (x ** 2 + y ** 2)))
+
+
+                sigma1 = 5
+                # sigma2 = 5
                 deviationMagnitude = (carSideVel - desiredSideVel)**2 + \
                                 (carForwardVel - desiredForwardVel)**2 + \
                                 (carAngularVel - desiredAngularVel)**2
@@ -217,7 +234,7 @@ class GazeboEnv(gym.Env):
 
                 # 1 - exp for Cost
                 # exp - 1 for reward
-                return math.exp(-deviationMagnitude/(2 * sigma**2)) - 1
+                return math.exp(-deviationMagnitude/(2 * sigma1**2))
         
         def getRewardPotentialBased(self, action, posData):
                 reward = 0.0
@@ -244,7 +261,32 @@ class GazeboEnv(gym.Env):
                 
                 reward = actionDeltaPenalty + anglePotentialReward + deviationPenalty
                 return reward
-             
+
+        def getReward(self, state):
+
+
+                x = state[0]
+                y = state[1]
+                deviationPenalty = -(abs((self.radius ** 2) - (x ** 2 + y ** 2)))
+
+                heading = math.degrees(state[6])
+                desiredRotation = math.degrees(math.atan2(-y, -x))
+                rotationReward = -abs(desiredRotation - heading)
+
+
+                v = state[-3]
+                speedReward = y
+
+                sigma1 = 5
+                sigma2 = 5
+
+                # deviationMagnitude = (desiredTangentialSpeed - carTangentialSpeed)**2 + \
+                #                (carAngularVel - desiredAngularVel)**2
+
+                # 1 - exp for Cost
+                # exp - 1 for reward
+                return 1 - math.exp(deviationPenalty / (2 * sigma1 ** 2)) #+ math.exp(rotationReward / (2 * sigma2 ** 2)) - 1
+
         def isDone(self, posData):       
                 #Done is true if the car ventures too far from the center of the circular drift
                 x = posData.pose[1].position.x
@@ -274,6 +316,15 @@ class GazeboEnv(gym.Env):
                 self.previous_action = -1
                 self.previous_imu = {}
                 self.previous_pos = posData
+
+                if self.evaluation:
+                        if self.rewards:
+                                total_reward = np.sum(self.rewards)
+                                print("Ave Reward: {}".format(total_reward))
+                                result_file = open("/home/azeng/results/result.txt", "a")
+                                result_file.write(str(total_reward) + "\n")
+                        self.rewards = []
+
 
                 return self.getState(posData)
         

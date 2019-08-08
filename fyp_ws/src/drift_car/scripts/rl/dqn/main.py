@@ -7,6 +7,7 @@ from utils import target_network_update_ops, target_network_update_apply, Experi
 from network_models import DQN
 import json
 import os
+import csv
 import params
 
 def train(config):
@@ -125,6 +126,9 @@ def train(config):
                         'Training loss: {:.4f}'.format(loss),
                         'Explore P: {:.4f}'.format(explore_p))
                     rewards_list.append(total_reward)
+                    with open("models/dqn.csv", "a") as savefile:
+                        wr = csv.writer(savefile, dialect="excel")
+                        wr.writerow([ep, total_reward])
                     
                     # Add experience to memory
                     memory.add((state, action, reward, next_state))
