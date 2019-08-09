@@ -31,5 +31,11 @@ Double Dueling Deep Q-Network | ```rosrun drift_car main.py```
 4. To train - ```drift_car_learn```. 
 5. To apply learned controller - ```applyController```.
 
+## DDPG
+
+## DQN
+
+## PE-TS
+
 ## Car Model
 To run using the Monster Truck, ```rosed drift_car_gazebo drift_car.launch``` and toggle the comments to load ```truck.xacro.urdf```.
